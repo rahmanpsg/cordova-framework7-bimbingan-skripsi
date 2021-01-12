@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.bimbingan.skripsi" version="1.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Bimbingan Skripsi</name>
+    <description>
+        Aplikasi Bimbingan Skripsi Online Teknik Informatika FT-UMPAR
+    </description>
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        Abd Rahman
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <access origin="https://*.000webhostapp.com/*" />
+    <access origin="https://bimbingan-skripsi-online.000webhostapp.com/api/*" />
+    <plugin name="cordova-plugin-whitelist" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="android-minSdkVersion" value="22" />
+        <preference name="android-targetSdkVersion" value="26" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+</widget>

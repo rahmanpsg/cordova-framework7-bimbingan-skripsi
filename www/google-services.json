@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "688062018871",
+    "firebase_url": "https://bimbingan-skripsi-online.firebaseio.com",
+    "project_id": "bimbingan-skripsi-online",
+    "storage_bucket": "bimbingan-skripsi-online.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688062018871:android:5133796f8a34bf7a4ed6b2",
+        "android_client_info": {
+          "package_name": "com.bimbingan.skripsi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688062018871-1d52epsoq0g99jc9n0oai7at434034dq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxzQ2F781gm0B3e0U-hYG8tlMfklo9_Eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688062018871-1d52epsoq0g99jc9n0oai7at434034dq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

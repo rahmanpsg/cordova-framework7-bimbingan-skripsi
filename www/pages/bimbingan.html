@@ -1,0 +1,322 @@
+<template>
+    <div class="page">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner sliding">
+                <div class="subnavbar">
+                    <div class="left"><a class="back"><i class="icon f7-icons">chevron_left</i></a></div>
+                    <div class="subnavbar-inner">
+                        <div class="title">Data Mahasiswa Bimbingan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar tabbar tabbar-labels toolbar-bottom">
+            <div class="toolbar-inner">
+                <a href="#view-bimbingan-mhs" class="tab-link tab-link-active">
+                    <i class="icon f7-icons">person_2</i>
+                    <span class="tabbar-label">Bimbingan</span>
+                </a>
+                <a href="#view-data-dokumen" class="tab-link">
+                    <i class="icon f7-icons">doc_text
+                        {{#if total_belum_diperiksa}}
+                        <span class="badge color-red">
+                            {{total_belum_diperiksa}}
+                        </span>
+                        {{/if}}
+                    </i>
+                    <span class="tabbar-label">Dokumen</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="tabs-swipeable-wrap">
+            <div class="tabs">
+                <div id="view-bimbingan-mhs" class="page-content tab tab-active">
+                    <div class="card">
+                        <div class="card-header"><b>Profil Mahasiswa</b></div>
+                        <div class="card-content card-content-padding">
+                            <p><b>Nama</b> : {{nama}}</p>
+                            <p><b>Nim</b> : {{nim}}</p>
+                            <p><b>Judul</b> : {{judul}}</p>
+                            <p><b>Total Bimbingan</b> : {{total}} kali</p>
+                            <p><b>SK Bimbingan</b> :</p>
+                            {{#if loadingImg}}
+                            <div class="skeleton-text skeleton-effect-blink">
+                                <div class="skeleton-block" style="width: 100px; height: 130px;">
+                                </div>
+                            </div>
+                            {{else}}
+                            <div class="item-media">
+                                <img src="{{URLimage}}" width="100" class="lazy lazy-fade-in" @click="PhotoBrowser">
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><b>History Bimbingan</b></div>
+                        <div class="card-content card-content-padding">
+                            <div class="timeline">
+                                {{#if loading}}
+                                {{#each '1234'}}
+                                <div class="timeline-item skeleton-text skeleton-effect-blink">
+                                    <div class="timeline-item-date">01 Jan</div>
+                                    <div class="timeline-item-divider"></div>
+                                    <div class="timeline-item-content">
+                                        <div class="timeline-item-inner custom-card">
+                                            <div class="timeline-item-time"><u><b>01:01:01 | BB-00001</b></u></div>
+                                            Meminta bimbingan kepada Pembimbinga 1
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/each}}
+                                {{else}}
+                                {{#each HistoryBimbingan}}
+                                <div class="timeline-item lazy lazy-fade-in">
+                                    <div class="timeline-item-date">{{dateHelper @key}}</div>
+                                    <div class="timeline-item-divider"></div>
+                                    <div class="timeline-item-content">
+                                        {{#each this}}
+                                        <div class="timeline-item-inner custom-card">
+                                            <div class="timeline-item-time"><u><b>{{jam}} | {{id}}</b></u></div>
+                                            {{status}}
+                                        </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                {{else}}
+                                Belum ada history bimbingan
+                                {{/each}}
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-content tab" id="view-data-dokumen">
+                    <div class="card">
+                        <div class="card-header"><b>Daftar</b></div>
+                        <div class="card-content card-content-padding">
+                            <div class="list media-list">
+                                <ul>
+                                    {{#each DaftarDokumen}}
+                                    <li class="swipeout" data-index="{{@index}}" data-id="{{id}}" @touchmove="aksiSlide"
+                                        @click="aksiOpen">
+                                        <div class="swipeout-content">
+                                            <a href="#" class="item-link item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <div class="item-title" id="itemPermintaan">Kode Bimbingan :
+                                                            <div class="chip">
+                                                                <div class="chip-label">{{id}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item-text">
+                                                        {{waktu}}
+                                                    </div>
+                                                    <div class="item-subtitle">Hasil Pemeriksaan :
+                                                        {{#js_if "this.hasil_periksa == null"}}
+                                                        <div class="chip color-red">
+                                                            <div class="chip-label"><i>Belum diperiksa</i></div>
+                                                        </div>
+                                                        {{else}}
+                                                        <i>{{this.hasil_periksa}}</i>
+                                                        {{/js_if}}
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="swipeout-actions-right">
+                                            <a class="color-yellow" data-file="{{file}}" data-id="{{id}}"
+                                                @click="aksiDownload"><i class="icon f7-icons">square_arrow_down</i>
+                                                &nbsp;Download</a>
+                                            <a class="color-blue" data-id="{{id}}" data-hasil="{{hasil_periksa}}"
+                                                @click="aksiPeriksa"><i
+                                                    class="icon f7-icons">pencil_ellipsis_rectangle</i>
+                                                &nbsp;Periksa</a>
+                                        </div>
+                                    </li>
+                                    {{else}}
+                                    <div class="block">
+                                        Belum ada dokumen yang diupload mahasiswa
+                                    </div>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<!-- rest of component data and methods -->
+<script>
+    // script must return component object
+    return {
+        data: function () {
+            return {
+                loading: true,
+                loadingImg: true
+            }
+        },
+        methods: {
+            getImgSK: function () {
+                const send = {
+                    nim: this.nim
+                }
+                formProses.getData(send, 'getImgSK').then((res) => {
+                    console.log(res.data);
+                    this.$setState({
+                        URLimage: res.data,
+                        loadingImg: false
+                    })
+                })
+            },
+            refreshHistory: function () {
+                const send = {
+                    nim: this.nim
+                }
+                formProses.getData(send, 'getHistoryBimbingan').then((res) => {
+                    this.$setState({
+                        HistoryBimbingan: res.data,
+                        loading: false
+                    })
+                })
+            },
+            refreshDaftarDokumen: function () {
+                const send = {
+                    nim: this.nim,
+                    nbm: localStorage.getItem('username')
+                }
+
+                formProses.getData(send, 'getDaftarDokumen').then((res) => {
+                    const total = res.data.filter((val) => {
+                        return val['hasil_periksa'] == null
+                    }).length
+
+                    this.$setState({
+                        DaftarDokumen: res.data,
+                        total_belum_diperiksa: total
+                    })
+                })
+            },
+            aksiOpen: function (e) {
+                app.swipeout.open($$(e.target).parents('li'));
+            },
+            aksiSlide: function (e) {
+                e.stopPropagation();
+            },
+            aksiDownload: function (e) {
+                const data = $$(e.target).dataset();
+                // const URL = 'http://192.168.43.78/bimbingan-skripsi-server/berkas/' + data['id'] + '/' +
+                //     data['file'];
+                const URL = 'https://bimbingan-skripsi-online.000webhostapp.com/berkas/' + data['id'] +
+                    '/' + data['file'];
+
+                cordova.InAppBrowser.open(URL, '_system');
+            },
+            aksiPeriksa: function (e) {
+                var self = this;
+                const teks = $$(e.target).data('hasil')
+                app.sheet.create({
+                    content: '<div class="sheet-modal">' +
+                        '<div class="toolbar">' +
+                        '<div class="toolbar-inner">' +
+                        '<div class="left block">Masukkan hasil pemeriksaan anda</div>' +
+                        '<div class="right">' +
+                        '<a class="link sheet-close">Selesai</a>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="sheet-modal-inner">' +
+                        '<div class="block">' +
+                        '<div class="text-editor text-editor-init">' +
+                        '<textarea class="text-editor-content" contenteditable id="textPemeriksaan"></textarea>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>',
+                    // Events
+                    on: {
+                        opened: function () {
+                            app.statusbar.overlaysWebView(false)
+                            $$('#textPemeriksaan').val(teks)
+                        },
+                        close: function () {
+                            app.statusbar.overlaysWebView(true)
+                            const teks = $$('#textPemeriksaan').val()
+                            const id = $$(e.target).data('id');
+
+                            app.dialog.confirm('Hasil pemeriksaan akan disimpan', function () {
+                                self.savePemeriksaan(id, teks)
+                            })
+                        }
+                    }
+                }).open();
+            },
+            PhotoBrowser: function (e) {
+                app.photoBrowser.create({
+                    photos: [{
+                        url: e.target.src,
+                        caption: 'SK Bimbingan'
+                    }],
+                    type: 'popup'
+                }).open();
+            }
+        },
+        on: {
+            pageInit: function (e) {
+                var self = this;
+
+                // do something on page init
+                this.$setState(this.$route.params)
+                this.getImgSK();
+                this.refreshHistory();
+                this.refreshDaftarDokumen();
+
+                self.savePemeriksaan = function (id, teks) {
+                    const data = [{
+                        name: 'status',
+                        value: 'diperiksa'
+                    }, {
+                        name: 'hasil_periksa',
+                        value: teks
+                    }]
+
+                    const where = {
+                        id: id
+                    }
+
+                    app.preloader.show();
+
+                    formProses.update('bimbingan', data, where).then(function (res) {
+                        app.preloader.hide();
+
+                        if (res.data) {
+                            app.dialog.alert('Hasil pemeriksaan berhasil disimpan',
+                                'Informasi');
+                            self.refreshHistory();
+                            self.refreshDaftarDokumen();
+
+                        } else {
+                            app.dialog.alert('Hasil pemeriksaan gagal disimpan', 'Gagal');
+                        }
+
+                    }).catch((err) => {
+                        app.preloader.hide();
+                        console.log(err);
+                        app.dialog.alert(
+                            'Bimbingan gagal disimpan, terjadi masalah diserver',
+                            'Gagal');
+                    })
+                }
+            }
+        }
+    }
+</script>

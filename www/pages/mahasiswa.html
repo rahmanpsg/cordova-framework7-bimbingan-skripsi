@@ -1,0 +1,446 @@
+<template>
+    <div class="page">
+        <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+                <div class="navbar-inner sliding">
+                    <div class="subnavbar">
+                        <div class="subnavbar-inner">
+                            <div class="title">Aplikasi Bimbingan Skripsi Online</div>
+                        </div>
+                        <div class="right">
+                            <a class="link popover-open" href="#" data-popover=".popover-links">
+                                <i class="f7-icons">ellipsis_vertical</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar tabbar tabbar-labels toolbar-bottom">
+            <div class="toolbar-inner">
+                <a href="#view-home" class="tab-link tab-link-active">
+                    <i class="icon f7-icons">house</i>
+                    <span class="tabbar-label">Home</span>
+                </a>
+                <a href="#view-bimbingan" class="tab-link">
+                    <i class="icon f7-icons">person_2</i>
+                    <span class="tabbar-label">Bimbingan</span>
+                </a>
+                <a href="#view-upload" class="tab-link">
+                    <i class="icon f7-icons">square_arrow_up
+                        {{#if totalUpload}}<span class="badge color-red">{{totalUpload}}</span>{{/if}}
+                    </i>
+                    <span class="tabbar-label">Upload</span>
+                </a>
+            </div>
+        </div>
+        <div class="tabs-swipeable-wrap">
+            <div class="tabs">
+                <div id="view-home" class="page-content tab tab-active">
+                    <div class="block">
+                        <div class="card">
+                            <div class="card-header"><b>Informasi</b></div>
+                            <div class="card-content card-content-padding text-align-center">
+                                <img src="./assets/logo.png" width="130" class="lazy lazy-fade-in">
+                                <p>Selamat Datang di Aplikasi Bimbingan Skripsi Online Teknik Informatika Fakultas
+                                    Teknik
+                                    Universitas Muhammadiyah Parepare</p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><b>Profil Mahasiswa</b></div>
+                            <div class="card-content card-content-padding">
+                                <p><b>Nama</b> : {{nama}}</p>
+                                <p><b>Nim</b> : {{nim}}</p>
+                                <p><b>Judul</b> : {{judul}}</a></p>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><b>Pembimbing</b></div>
+                            <div class="card-content card-content-padding">
+                                <p><b>Pembimbing 1</b> : {{nama_pembimbing_satu}}</p>
+                                <p><b>Pembimbing 2</b> : {{nama_pembimbing_dua}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-bimbingan" class="page-content tab ptr-content" data-name="view-bimbingan">
+                    <div class="ptr-preloader">
+                        <div class="preloader"></div>
+                        <div class="ptr-arrow"></div>
+                    </div>
+                    <div class="list-block">
+                        <div class="card">
+                            <div class="card-header"><b>Minta Bimbingan</b></div>
+                            <div class="card-content card-content-padding">
+                                <form id="bimbinganForm">
+                                    <input type="hidden" name="nim" value="{{nim}}">
+                                    <div class="list">
+                                        <ul>
+                                            <li>
+                                                <a class="item-link smart-select smart-select-init"
+                                                    data-open-in="sheet">
+                                                    <select name="nbm" required validate
+                                                        data-error-message="Pembimbing belum dipilih">
+                                                        <option value="{{pembimbing_satu}}"
+                                                            data-display-as="Pembimbing 1">
+                                                            {{nama_pembimbing_satu}}
+                                                        </option>
+                                                        <option value="{{pembimbing_dua}}"
+                                                            data-display-as="Pembimbing 2">
+                                                            {{nama_pembimbing_dua}}</option>
+                                                    </select>
+                                                    <div class="item-content">
+                                                        <div class="item-inner">
+                                                            <div class="item-title">Pilih Pembimbing</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <a class="button button-fill" @click="kirim">Kirim</a>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><b>History Bimbingan</b></div>
+                            <div class="card-content card-content-padding">
+                                <div class="timeline">
+                                    {{#if loading}}
+                                    {{#each '1234'}}
+                                    <div class="timeline-item skeleton-text skeleton-effect-blink">
+                                        <div class="timeline-item-date">01 Jan</div>
+                                        <div class="timeline-item-divider"></div>
+                                        <div class="timeline-item-content">
+                                            <div class="timeline-item-inner custom-card">
+                                                <div class="timeline-item-time"><u><b>01:01:01 | BB-00001</b></u></div>
+                                                Meminta bimbingan kepada Pembimbinga 1
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{/each}}
+                                    {{else}}
+                                    {{#each HistoryBimbingan}}
+                                    <div class="timeline-item lazy lazy-fade-in">
+                                        <div class="timeline-item-date">{{dateHelper @key}}</div>
+                                        <div class="timeline-item-divider"></div>
+                                        <div class="timeline-item-content">
+                                            {{#each this}}
+                                            <div class="timeline-item-inner custom-card">
+                                                <div class="timeline-item-time">{{jam}} | {{id}}</div>
+                                                {{#js_if "this.status == 'Dokumen telah diperiksa'"}}
+                                                Dokumen telah diperiksa
+                                                <div class="chip" @click="lihatHasil">
+                                                    <div class="chip-media" style="width: 28px;height: 28px">
+                                                        <i class="f7-icons"
+                                                            style="font-size: 10px; color:black;">chevron_right</i>
+                                                    </div>
+                                                    <div class="chip-label sheet-open" data-hasil="{{hasil}}"
+                                                        data-sheet=".my-sheet">Klik untuk melihat
+                                                        hasil pemeriksaan
+                                                    </div>
+                                                </div>
+                                                {{else}}
+                                                {{this.status}}
+                                                {{/js_if}}
+                                            </div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                    {{else}}
+                                    Belum ada history bimbingan
+                                    {{/each}}
+                                    {{/if}}
+                                </div>
+                                <div class="sheet-modal my-sheet">
+                                    <div class="toolbar">
+                                        <div class="toolbar-inner">
+                                            <div class="left block">
+                                                <h4>Hasil Pemeriksaan Dokumen</h4>
+                                            </div>
+                                            <div class="right"><a class="link sheet-close" href="#">Tutup</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="sheet-modal-inner">
+                                        <div class="block">
+                                            <p>{{lihat_hasil}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-upload" class="page-content tab ptr-content">
+                    <div class="ptr-preloader">
+                        <div class="preloader"></div>
+                        <div class="ptr-arrow"></div>
+                    </div>
+                    <div class="list-block">
+                        <div class="card">
+                            <div class="card-header"><b>Upload Dokumen</b></div>
+                            <div class="card-content card-content-padding">
+                                <form id="uploadForm" enctype="multipart/form-data">
+                                    <div class="list inline-labels no-hairlines-md">
+                                        <ul>
+                                            <li>
+                                                <a class="item-link smart-select smart-select-init select-kb"
+                                                    id="selectID">
+                                                    <select name="id" required validate>
+                                                        <option value="" selected disabled
+                                                            data-display-as="Tidak ada data">Tidak ada data</option>
+                                                        {{#each KodeUploadFile}}
+                                                        <option value="{{id}}" data-display-as="{{id}}">
+                                                            {{id}}
+                                                        </option>
+                                                        {{/each}}
+                                                    </select>
+                                                    <div class="item-content">
+                                                        <div class="item-inner">
+                                                            <div class="item-title">Pilih Kode Bimbingan</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <div class="item-link">
+                                                    <div class="item-content item-input">
+                                                        <div class="item-inner">
+                                                            <div class="item-input-wrap">
+                                                                <input type="file" name="file" required validate
+                                                                    data-error-message="File tidak boleh kosong">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <a class="button button-fill" @click="upload">Upload</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="popover popover-links">
+            <div class="popover-inner">
+                <div class="list">
+                    <ul>
+                        <li><a class="list-button item-link popover-close" @click="logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    // script must return component object
+    return {
+        data: function () {
+            const dataMhs = localStorage.getItem('dataMhs') != '' ? JSON.parse(localStorage.getItem('dataMhs')) :
+                null;
+            const data = {
+                loading: true,
+                ...dataMhs
+            };
+            return data;
+        },
+        on: {
+            pageInit: function () {
+                const send = {
+                    select: 'a.token, a.nim, a.nama, a.judul, b.pembimbing_satu, b.pembimbing_dua, c.nama as nama_pembimbing_satu, d.nama as nama_pembimbing_dua ',
+                    tabel: 'tbl_mahasiswa a',
+                    join: JSON.stringify([{
+                            tbl: 'tbl_pembimbing b',
+                            on: 'a.nim = b.nim'
+                        },
+                        {
+                            tbl: 'tbl_dosen c',
+                            on: 'b.pembimbing_satu = c.nbm'
+                        },
+                        {
+                            tbl: 'tbl_dosen d',
+                            on: 'b.pembimbing_dua = d.nbm'
+                        }
+                    ]),
+                    where: 'a.nim=' + localStorage.getItem('username')
+                };
+
+                var self = this;
+
+                formProses.getData(send).then((res) => {
+                    saveToken(res.data[0]['token']);
+                    self.$setState(res.data[0]);
+                    localStorage.setItem('dataMhs', JSON.stringify(res.data[0]));
+                    self.refreshHistory();
+                    self.refreshUpload();
+                }).catch((err) => {
+                    console.log(err);
+                    app.dialog.preloader('Tidak dapat terhubung ke server...');
+                })
+
+                $$('.select-kb').on('smartselect:open', () => {
+                    app.statusbar.overlaysWebView(false)
+                })
+
+                $$('.select-kb').on('smartselect:close', () => {
+                    app.statusbar.overlaysWebView(true)
+                })
+
+
+                var $ptrContentBimbingan = $$('#view-bimbingan');
+                $ptrContentBimbingan.on('ptr:refresh', function (e) {
+                    const ptr = app.ptr.get('#view-bimbingan');
+                    self.refreshHistory();
+                    ptr.done();
+                })
+
+                var $ptrContentUpload = $$('#view-upload');
+                $ptrContentUpload.on('ptr:refresh', function (e) {
+                    const ptr = app.ptr.get('#view-upload');
+                    self.refreshUpload();
+                    ptr.done();
+                })
+            }
+        },
+        methods: {
+            logout: () => {
+                localStorage.removeItem('hasLogin');
+                FirebasePlugin.unregister();
+
+                mainView.router.navigate('/login/', {
+                    reloadAll: true
+                });
+            },
+            kirim: function () {
+                var self = this;
+                app.dialog.confirm('Permintaan bimbingan akan dikirim', function () {
+                    const form = $$('#bimbinganForm')[0];
+                    var data = serializeArray(form)
+
+                    const id = generateID('tbl_bimbingan', 'BB');
+
+                    const waktu = formProses.getWaktu();
+
+                    data.push({
+                        name: 'id',
+                        value: id
+                    }, {
+                        name: 'history',
+                        value: JSON.stringify({
+                            'meminta': waktu
+                        })
+                    }, {
+                        name: 'status',
+                        value: 'meminta'
+                    })
+
+                    app.dialog.preloader('Meminta bimbingan...');
+
+                    formProses.tambah('bimbingan', data).then((res) => {
+                        app.dialog.close();
+
+                        if (res.data) {
+                            app.dialog.alert('Permintaan bimbingan berhasil dikirim', 'Berhasil');
+                            self.refreshHistory();
+                        } else {
+                            app.dialog.alert('Permintaan bimbingan gagal dikirim', 'Gagal');
+                        }
+
+                    }).catch((err) => {
+                        app.preloader.hide();
+                        console.log(err);
+                        app.dialog.alert(
+                            'Permintaan bimbingan gagal dikirim, terjadi masalah diserver',
+                            'Gagal');
+                    })
+                });
+            },
+            upload: function () {
+                var self = this;
+                const form = $$('#uploadForm')[0];
+                const smartSelect = app.smartSelect.get('#selectID');
+
+                if (form.checkValidity()) {
+                    app.dialog.confirm('File akan di upload', function () {
+                        var formData = new FormData(form);
+                        formData.append('status', 'diupload');
+                        formData.append('nama', this.nama);
+
+                        app.dialog.preloader('Mengupload file...');
+
+                        formProses.upload(formData).then((res) => {
+                            app.dialog.close();
+                            if (res.data[0]) {
+                                app.dialog.alert(res.data[1], 'Berhasil');
+                                self.refreshHistory();
+                                self.refreshUpload();
+                                smartSelect.setValue([]);
+                                form.reset();
+                            } else {
+                                app.dialog.alert(res.data[1], 'Gagal');
+                            }
+                        }).catch((err) => {
+                            app.dialog.close();
+                            app.dialog.alert('Terjadi masalah diserver', 'Gagal');
+                            console.log(err);
+                        })
+
+                    })
+                } else {
+                    app.dialog.alert('Kode Bimbingan belum dipilih', 'Gagal');
+                }
+            },
+            refreshHistory: function () {
+                this.$setState({
+                    loading: true
+                })
+
+                const send = {
+                    nim: this.nim
+                }
+                formProses.getData(send, 'getHistoryBimbingan').then((res) => {
+                    this.$setState({
+                        HistoryBimbingan: res.data,
+                        loading: false
+                    })
+                })
+            },
+            refreshUpload: function () {
+                const send = {
+                    nim: this.nim
+                }
+                formProses.getData(send, 'getKodeUpload').then((res) => {
+                    const totalUpload = res.data.length
+                    this.$setState({
+                        KodeUploadFile: res.data,
+                        totalUpload: totalUpload
+                    })
+                })
+            },
+            lihatHasil: function (e) {
+                const hasil = $$(e.target).data('hasil');
+
+                this.$setState({
+                    lihat_hasil: hasil
+                })
+            }
+        }
+    }
+</script>
